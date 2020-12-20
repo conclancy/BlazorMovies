@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using static BlazorMovies.Client.Shared.MainLayout;
+using MathNet.Numerics.Statistics;
 
 namespace BlazorMovies.Client.Pages
 {
