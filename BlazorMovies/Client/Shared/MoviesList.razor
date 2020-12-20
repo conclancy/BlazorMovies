@@ -1,4 +1,6 @@
-﻿<input type="checkbox" @bind="displayButtons" />
+﻿@inject IJSRuntime js
+
+<input type="checkbox" @bind="displayButtons" />
 <br />
 
 <GenericList List="Movies">
@@ -13,8 +15,13 @@
 
     bool displayButtons = false;
 
-    private void DeleteMovie(Movie movie)
+    private async Task DeleteMovie(Movie movie)
     {
-        Movies.Remove(movie);
+        var confirmed = await js.Confirm($"Are you sure you want to delete {movie.Title}?");
+
+        if(confirmed)
+        {
+            Movies.Remove(movie);
+        }
     }
 }
