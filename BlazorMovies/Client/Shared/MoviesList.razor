@@ -1,10 +1,12 @@
 ﻿@inject IJSRuntime js
 
-<GenericList List="Movies">
-    <ElementTemplate>
-        <IndividualMovie Movie="context" DeleteMovie="DeleteMovie" />
-    </ElementTemplate>
-</GenericList>
+<div class="movies-container">
+    <GenericList List="Movies">
+        <ElementTemplate>
+            <IndividualMovie Movie="context" DeleteMovie="DeleteMovie" />
+        </ElementTemplate>
+    </GenericList>
+</div>
 
 @code {
 
