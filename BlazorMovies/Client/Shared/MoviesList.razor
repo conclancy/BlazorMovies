@@ -1,24 +1,12 @@
 ﻿@inject IJSRuntime js
 
-<input type="checkbox" @bind="displayButtons" />
-<br />
-
 <GenericList List="Movies">
     <ElementTemplate>
-        <IndividualMovie Movie="context" DisplayButton="displayButtons" DeleteMovie="DeleteMovie" />
+        <IndividualMovie Movie="context" DeleteMovie="DeleteMovie" />
     </ElementTemplate>
 </GenericList>
 
-<Confirmation @ref="confirmation" onCancel="onCancel" onConfirm="onConfirm">
-    <div>Do you wish to delete this @movieToBeDeleted.Title?</div>
-</Confirmation>
-
 @code {
-
-    // Feilds
-    Confirmation confirmation;
-    bool displayButtons = false;
-    Movie movieToBeDeleted;
 
     // Properties 
     [Parameter]
@@ -27,21 +15,19 @@
     // Methods
     private async Task DeleteMovie(Movie movie)
     {
-        movieToBeDeleted = movie;
-        confirmation.Show();
+        await js.MyFunction("Custom Message");
+        var confirmed = await js.Confirm($"Are you sure you want to delete {movie.Title}?");
+
+        if (confirmed)
+        {
+            Movies.Remove(movie);
+        }
 
     }
 
-    void onConfirm()
+    protected override bool ShouldRender()
     {
-        Movies.Remove(movieToBeDeleted);
-        confirmation.Hide();
-        movieToBeDeleted = null;
+        return true;
     }
 
-    void onCancel()
-    {
-        confirmation.Hide();
-        movieToBeDeleted = null;
-    }
 }

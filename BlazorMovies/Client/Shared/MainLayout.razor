@@ -11,25 +11,9 @@
         </div>
 
         <div class="content px-4">
-            <CascadingValue Value="@appState">
                 @Body
-            </CascadingValue>
         </div>
-
-        <footer position="fixed" bottom="0">
-            <p>test</p>
-        </footer>
     </div>
 </div>
-
-@code{
-    public class AppState
-    {
-        public string Color { get; set; } = "blue";
-        public string Size { get; set; } = "12px"; 
-    }
-
-    AppState appState = new AppState();
-}
 
 

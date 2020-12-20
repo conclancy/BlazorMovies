@@ -2,24 +2,10 @@
  
 <h1>Counter</h1>
 
-<div style="display: flex">
-    <div style="width: 150px">
-        <select @bind="AppState.Color" class="form-control" style="margin-top: 15px">
-            <option value="green">green</option>
-            <option value="blue">blue</option>
-            <option value="red">red</option>
-        </select>
-    </div>
-</div>
-
-<p style="color: @AppState.Color;">Current count: @currentCount</p>
-<p>Singleton count: @singleton.Value</p>
-<p>Transiet count: @transient.Value</p>
+<p >Current count: @currentCount</p>
 
 <button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
 <br />
 
 <input type="number" @bind="currentCount"/>
 <br />
-
-<MoviesList Movies="movies"/>
