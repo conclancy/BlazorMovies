@@ -11,6 +11,10 @@ namespace BlazorMovies.Client.Helpers
     public class HttpService: IHttpService
     {
         private readonly HttpClient httpClient;
+        private JsonSerializerOptions defaultJsonSerializerOptions => new JsonSerializerOptions()
+        {
+            PropertyNameCaseInsensitive = true
+        };
 
         public HttpService(HttpClient httpClient)
         {
@@ -23,6 +27,44 @@ namespace BlazorMovies.Client.Helpers
             var stringContent = new StringContent(dataJson, Encoding.UTF8, "application/json");
             var response = await httpClient.PostAsync(url, stringContent);
             return new HttpResponseWrapper<object>(null, response.IsSuccessStatusCode, response);
+        }
+
+        /// <summary>
+        /// A post method for sending data to server and receiving back information.
+        /// Useful for getting a primary key back from the database for new object creation. 
+        /// </summary>
+        /// <typeparam name="T">Generic type for item being sent to server</typeparam>
+        /// <typeparam name="TResponse">Response type from server as a generic type</typeparam>
+        /// <param name="url">The address for the post endpoint</param>
+        /// <param name="data">The data to be sent to the endpoint</param>
+        /// <returns>HttpResponseWrapper containing a generic type</returns>
+        public async Task<HttpResponseWrapper<TResponse>> Post<T, TResponse>(string url, T data)
+        {
+            var dataJson = JsonSerializer.Serialize(data);
+            var stringContent = new StringContent(dataJson, Encoding.UTF8, "application/json");
+            var response = await httpClient.PostAsync(url, stringContent);
+            if (response.IsSuccessStatusCode)
+            {
+                var responseDeserialized = await Deserialize<TResponse>(response, defaultJsonSerializerOptions);
+                return new HttpResponseWrapper<TResponse>(responseDeserialized, true, response);
+            }
+            else
+            {
+                return new HttpResponseWrapper<TResponse>(default, false, response);
+            }
+        }
+
+        /// <summary>
+        /// Deserialize an HttpResponseMessage
+        /// </summary>
+        /// <typeparam name="T">A generic type</typeparam>
+        /// <param name="httpResponse">An http response message</param>
+        /// <param name="options">Json deserializing options</param>
+        /// <returns>Task returining a generic type</returns>
+        private async Task<T> Deserialize<T>(HttpResponseMessage httpResponse, JsonSerializerOptions options)
+        {
+            var responseString = await httpResponse.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<T>(responseString, options);
         }
     }
 }
