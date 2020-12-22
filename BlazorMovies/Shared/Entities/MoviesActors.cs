@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BlazorMovies.Shared.Entities
 {
-    class MoviesActors
+    public class MoviesActors
     {
         public int PersonId { get; set; }
         public int MovieId { get; set; }
