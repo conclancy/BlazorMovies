@@ -34,6 +34,14 @@ namespace BlazorMovies.Server.Controllers
                 movie.Poster = await fileStorageService.SaveFile(personPicture, "jpg", "movies");
             }
 
+            if(movie.MoviesActors != null)
+            {
+                for (int i = 0; i < movie.MoviesActors.Count; i++)
+                {
+                    movie.MoviesActors[i].Order = i + 1;
+                }
+            }
+
             context.Add(movie);
             await context.SaveChangesAsync();
             return movie.Id;
