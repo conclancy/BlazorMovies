@@ -1,6 +1,8 @@
 ﻿using BlazorMovies.Server.Helpers;
+using BlazorMovies.Shared.DTO;
 using BlazorMovies.Shared.Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +23,32 @@ namespace BlazorMovies.Server.Controllers
         {
             this.context = context;
             this.fileStorageService = fileStorageService;
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<IndexPageDTO>> Get()
+        {
+            // Fields 
+            int limit = 6;
+            DateTime todaysDate = DateTime.Today;
+            IndexPageDTO response = new IndexPageDTO();
+
+            List<Movie> moviesInTheaters = await context.Movies
+                .Where(x => x.InTheaters)
+                .Take(limit)
+                .OrderByDescending(x => x.ReleaseDate)
+                .ToListAsync();
+
+            List<Movie> upcomingReleases = await context.Movies
+                .Where(x => x.ReleaseDate > todaysDate)
+                .OrderBy(x => x.ReleaseDate)
+                .Take(limit)
+                .ToListAsync();
+
+            response.InTheaters = moviesInTheaters;
+            response.UpcomingReleases = upcomingReleases;
+
+            return response;
         }
 
         // Methods 
