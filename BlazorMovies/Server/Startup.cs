@@ -25,7 +25,9 @@ namespace BlazorMovies.Server
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-            services.AddControllersWithViews();
+            services.AddControllersWithViews()
+                // to help ignore circular references that exist within our classes 
+                .AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
             services.AddRazorPages();
             services.AddScoped<IFileStorageService, AzureStorageService>();
         }
