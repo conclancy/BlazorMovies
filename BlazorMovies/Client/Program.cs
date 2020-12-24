@@ -37,7 +37,13 @@ namespace BlazorMovies.Client
             services.AddScoped<IMoviesRepository, MoviesRepository>();
             services.AddAuthorizationCore();
 
-            services.AddScoped<AuthenticationStateProvider, DummyAuthenticationStateProvider>(); 
+            services.AddScoped<JWTAuthenticationStateProvider>();
+            services.AddScoped<AuthenticationStateProvider, JWTAuthenticationStateProvider>(
+                provider => provider.GetRequiredService<JWTAuthenticationStateProvider>()
+            );
+            services.AddScoped<ILoginService, JWTAuthenticationStateProvider>(
+               provider => provider.GetRequiredService<JWTAuthenticationStateProvider>()
+                );
         }
     }
 }
