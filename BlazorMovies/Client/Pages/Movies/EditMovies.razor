@@ -1,22 +1,22 @@
 ﻿@page "/movies/edit/{MovieId:int}"
 @inject IMoviesRepository movieRepository
 @inject NavigationManager navigationManager
+@attribute [Authorize]
 
 <h3>Edit Movies</h3>
 
 @if (Movie != null)
 {
-    <MovieForm Movie="Movie" 
-               OnValidSubmit="Edit" 
-               NotSelectedGenres="NotSelectedGenres" 
+    <MovieForm Movie="Movie"
+               OnValidSubmit="Edit"
+               NotSelectedGenres="NotSelectedGenres"
                SelectedGenres="SelectedGenres"
-               SelectedActors="SelectedActors"
-               />
+               SelectedActors="SelectedActors" />
 }
 
 @code {
 
-    // Fields 
+    // Fields
     private Movie Movie;
     private List<Genre> NotSelectedGenres;
     private List<Genre> SelectedGenres;

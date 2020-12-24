@@ -1,10 +1,11 @@
 ﻿@page "/genre/edit/{GenreId:int}"
 @inject IGenreRepository genreRepository
 @inject NavigationManager navigationManager
+@attribute [Authorize]
 
 <h3>EditGenres</h3>
 
-<GenreForm Genre="genre" OnValidSubmit="Edit"/>
+<GenreForm Genre="genre" OnValidSubmit="Edit" />
 
 @code {
     [Parameter] public int GenreId { get; set; }
