@@ -34,7 +34,7 @@ namespace BlazorMovies.Client.Auth
                 return Anonymous;
             }
 
-            return BuildJwtToken(token)
+            return BuildAuthenticationState(token);
 
         }
 
