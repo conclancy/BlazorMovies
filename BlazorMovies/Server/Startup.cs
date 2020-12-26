@@ -1,5 +1,6 @@
 using AutoMapper;
 using BlazorMovies.Server.Helpers;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -37,22 +38,32 @@ namespace BlazorMovies.Server
             services.AddRazorPages();
             services.AddScoped<IFileStorageService, AzureStorageService>();
             services.AddAutoMapper(typeof(Startup));
-            services.AddIdentity<IdentityUser, IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddDefaultTokenProviders();
 
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options => options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes(Configuration["jwt:key"])
-                    ),
-                    ClockSkew = TimeSpan.Zero
-                });
+            // ***** Old Auth System ***** //
+            //services.AddIdentity<IdentityUser, IdentityRole>()
+            //    .AddEntityFrameworkStores<ApplicationDbContext>()
+            //    .AddDefaultTokenProviders();
+            //
+            //services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            //    .AddJwtBearer(options => options.TokenValidationParameters = new TokenValidationParameters
+            //    {
+            //        ValidateIssuer = false,
+            //        ValidateAudience = false,
+            //        ValidateLifetime = true,
+            //        ValidateIssuerSigningKey = true,
+            //        IssuerSigningKey = new SymmetricSecurityKey(
+            //            Encoding.UTF8.GetBytes(Configuration["jwt:key"])
+            //        ),
+            //        ClockSkew = TimeSpan.Zero
+            //    });
+
+            services.AddDefaultIdentity<IdentityUser>(options => { options.SignIn.RequireConfirmedAccount = false; })
+                .AddRoles<IdentityUser>()
+                .AddEntityFrameworkStores<ApplicationDbContext>();
+
+            services.AddIdentityServer().AddApiAuthorization<IdentityUser, ApplicationDbContext>();
+
+            services.AddAuthentication().AddIdentityServerJwt();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -78,6 +89,9 @@ namespace BlazorMovies.Server
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            // ***** New Auth System Requirements ***** //
+            app.UseIdentityServer();
 
             app.UseEndpoints(endpoints =>
             {
